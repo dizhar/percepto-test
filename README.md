@@ -1,6 +1,6 @@
 # Percepto-Test Framework
 
-A Python-based testing framework using Selenium and pytest for UI testing of the TerminalX website.
+A Python-based testing framework using Selenium and pytest for UI testing of the TerminalX website. This framework implements the Page Object Model design pattern for maintainable and scalable test automation. It includes comprehensive Allure reporting.
 
 ## Setup Instructions
 
@@ -15,7 +15,7 @@ A Python-based testing framework using Selenium and pytest for UI testing of the
 1. Clone the repository:
 
    ```
-   git clone <repository-url>
+   git clone git@github.com:dizhar/percepto-test.git
    cd percepto-test
    ```
 
@@ -89,9 +89,6 @@ chmod +x run_tests.sh
 # Run tests and generate reports (Windows)
 run_tests.bat
 
-# Debug tests (macOS/Linux)
-chmod +x debug_tests.sh
-./debug_tests.sh
 
 # Serve Allure report via HTTP server (if you have issues viewing the report)
 chmod +x serve_allure_report.sh
@@ -105,6 +102,8 @@ chmod +x serve_allure_report.sh
 The HTML report is automatically generated in the reports directory when you run the tests.
 
 #### Allure Report
+
+The framework uses Allure for comprehensive test reporting.
 
 ```
 # Run tests with Allure results collection
@@ -137,9 +136,7 @@ percepto-test/
 │   │   ├── api_utils.py         # API utilities
 │   │   └── test_data.py         # Test data utilities
 │   ├── config/                  # configuration files
-│   │   ├── config.ini           # Main configuration
-│   │   ├── browsers.json        # Browser configurations
-│   │   └── api_config.json      # API configurations
+│   │   └── config.ini           # Main configuration
 │   ├── data/                    # test data
 │   │   └── users.json           # User credentials
 │   └── tests/                   # test directory
@@ -151,31 +148,30 @@ percepto-test/
 ├── requirements.txt             # project dependencies
 ├── run_tests.sh                 # script to run tests (Unix)
 ├── run_tests.bat                # script to run tests (Windows)
-├── debug_tests.sh               # script to run tests in debug mode
 ├── serve_allure_report.sh       # script to serve Allure report
 ├── download_drivers.sh          # script to download browser drivers
 │
 └── reports/                     # test reports and logs
-    ├── screenshots/             # failure screenshots
-    ├── logs/                    # test execution logs
-    ├── allure-results/          # Allure raw results
-    └── allure-report/           # Generated Allure report
+    ├── screenshots/             # failure screenshots (generated during test runs)
+    ├── logs/                    # test execution logs (generated during test runs)
+    ├── allure-results/          # Allure raw results (generated during test runs)
+    └── allure-report/           # Generated Allure report (generated during test runs)
 ```
 
 ## Configuration
 
-Update the configuration files in the `src/config` directory to change:
+Update the configuration file in the `src/config` directory to change:
 
-- Target browsers (`browsers.json`)
 - Test environments (`config.ini`)
+- Browser settings (`config.ini`)
 - Timeouts and other settings (`config.ini`)
 
 ### config.ini
 
 The main configuration file contains settings for:
 
-- Base URL (currently set to Google, but the framework uses TerminalX URL)
-- Browser settings
+- Base URL (currently set to TerminalX URL)
+- Browser settings (browser type, headless mode, etc.)
 - Wait timeouts
 - Screenshot settings
 
@@ -187,9 +183,20 @@ The main configuration file contains settings for:
 
 ## Debugging Tests
 
-You can use the `debug_tests.sh` script to run tests in debug mode with the Python debugger (pdb).
-This allows you to set breakpoints and step through the test execution.
+You can use the Python debugger (pdb) or the VSCode debugger to debug your tests:
 
+```python
+# Add this line where you want to set a breakpoint
+import pdb; pdb.set_trace()
 ```
-./debug_tests.sh
-```
+
+Alternatively, you can use the VSCode debugging configuration in `.vscode/launch.json` to run and debug tests directly from the editor.
+
+## CI/CD Integration
+
+This framework can be integrated with CI/CD pipelines such as Jenkins, GitHub Actions, or GitLab CI. The key steps for integration are:
+
+1. Install dependencies: `pip install -r requirements.txt`
+2. Download browser drivers: `./download_drivers.sh`
+3. Run tests: `pytest` or `./run_tests.sh`
+4. Generate and publish reports: `allure generate reports/allure-results -o reports/allure-report --clean`

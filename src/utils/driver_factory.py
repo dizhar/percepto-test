@@ -32,8 +32,24 @@ class DriverFactory:
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             
-            service = Service(ChromeDriverManager().install())
-            driver = webdriver.Chrome(service=service, options=options)
+            # Try to use the latest ChromeDriver version
+            try:
+                # First try with the latest version (no version specified)
+                service = Service(ChromeDriverManager().install())
+                driver = webdriver.Chrome(service=service, options=options)
+            except Exception as e:
+                print(f"Error with latest ChromeDriver: {str(e)}")
+                try:
+                    # Try with a specific version that might be compatible with Chrome 131
+                    print("Trying with a specific ChromeDriver version...")
+                    service = Service(ChromeDriverManager(version="123.0.6312.58").install())
+                    driver = webdriver.Chrome(service=service, options=options)
+                except Exception as e2:
+                    print(f"Error with specific ChromeDriver version: {str(e2)}")
+                    # As a last resort, try with the Chrome binary path
+                    print("Trying with Chrome binary path...")
+                    options.binary_location = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                    driver = webdriver.Chrome(options=options)
             
         elif browser_name == "firefox":
             options = webdriver.FirefoxOptions()
@@ -50,5 +66,6 @@ class DriverFactory:
         
         driver.maximize_window()
         driver.implicitly_wait(wait_times['implicit_wait'])
-        
+
         return driver
+

@@ -13,4 +13,4 @@ requests==2.32.3
 # Utilities
 python-dotenv==1.0.0  # For environment variables
 configparser==6.0.0   # For reading config files
-pytest-check # Import pytest-check for soft assertions
+pytest-check==2.2.0  # Import pytest-check for soft assertions

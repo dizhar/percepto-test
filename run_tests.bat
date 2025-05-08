@@ -20,19 +20,19 @@ if not exist reports mkdir reports
 if not exist reports\screenshots mkdir reports\screenshots
 if not exist reports\logs mkdir reports\logs
 
+:: Let the driver_factory.py handle Chrome driver version selection
+
 :: Check if Allure is installed
 where allure >nul 2>nul
 if %ERRORLEVEL% == 0 (
     echo Running tests with Allure reporting...
     pytest --alluredir=reports\allure-results %*
     
-    :: Generate Allure report
-    allure generate reports\allure-results -o reports\allure-report --clean
+    echo Tests completed. Serving Allure report...
     
-    echo Tests completed. Allure report generated at reports\allure-report\index.html
-    
-    :: Open report
-    start "" "reports\allure-report\index.html"
+    :: Use allure serve to directly serve the results
+    :: This is more reliable than generating a static report
+    allure serve reports\allure-results
 ) else (
     echo Allure not detected. Running tests with HTML reporting only...
     pytest %*

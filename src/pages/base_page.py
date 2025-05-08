@@ -1,14 +1,25 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-import time
+import configparser
+import os
+
 
 class BasePage:
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
+        # Load configuration
+        self.config = self._load_config()
+        self.base_url = self.config.get('Environments', 'base_url')
 
+    def _load_config(self):
+        """Load configuration from config.ini file"""
+        config = configparser.ConfigParser()
+        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'config.ini')
+        config.read(config_path)
+        return config
+    
     def find_element(self, locator):
         return self.wait.until(EC.visibility_of_element_located(locator))
 
@@ -29,8 +40,7 @@ class BasePage:
         
     def navigate_to_page(self, path=""):
         """Navigate to a specific path on the site"""
-        base_url = "https://www.terminalx.com"
-        self.driver.get(f"{base_url}{path}")
+        self.driver.get(f"{self.base_url}{path}")
         
     def is_element_displayed(self, locator, timeout=10):
         """Check if an element is displayed"""
